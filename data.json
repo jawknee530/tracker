@@ -5,7 +5,8 @@
       {
         "peer_id": "",
         "ip": "",
-        "peer": ""
+        "peer": "",
+        "completed": ""
       }
     ]
   },
@@ -15,27 +16,32 @@
       {
         "peer_id": "-qB3370-VhjdD9sdfXwR",
         "ip": "73.66.138.217",
-        "port": 51206
-      },
-      {
-        "peer_id": "-qB3370-)81S2NmAXSmU",
-        "ip": "73.90.210.214",
-        "port": 42258
-      },
-      {
-        "peer_id": "-DE13D0-9CBwmc5ct0SP",
-        "ip": "73.66.138.217",
-        "port": 51201
+        "port": "8999",
+        "completed": true
       },
       {
         "peer_id": "-DE13C0-COOYNu4YCcOY",
         "ip": "73.66.138.217",
-        "port": 39290
+        "port": "63014",
+        "completed": true
+      },
+      {
+        "peer_id": "-DE13D0-9CBwmc5ct0SP",
+        "ip": "73.66.138.217",
+        "port": "50359",
+        "completed": true
+      },
+      {
+        "peer_id": "-qB3370-)81S2NmAXSmU",
+        "ip": "73.90.210.214",
+        "port": "8999",
+        "completed": false
       },
       {
         "peer_id": "-DE13D0-vwH-eC3I!x-x",
         "ip": "73.25.106.180",
-        "port": 51320
+        "port": "6881",
+        "completed": false
       }
     ]
   },
@@ -43,9 +49,10 @@
     "info_hash": "df2986640d30fd18a7ff03bb08e2672798adb7e1",
     "peers": [
       {
-        "peer_id": "-qB3370-VhjdD9sdfXwR",
-        "ip": "73.66.138.217",
-        "port": 51197
+        "peer_id": "-qB3370-)81S2NmAXSmU",
+        "ip": "73.90.210.214",
+        "port": "8999",
+        "completed": false
       }
     ]
   }

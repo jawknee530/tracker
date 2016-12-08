@@ -50,42 +50,53 @@ function hashy (str) {
 }
 
 app.get('/', function(req, res) {
-  //data.test = req.query.test;
-  //var info_hash = decodeURIComponent(req.query.info_hash);
-  //console.log(info_hash);
-  //data.info_hash = req.query.info_hash;
-  //data.info_hash.ip = req.connection.remoteAddress;
-  //data.info_hash.port = req.query.port;
-  //console.log(ip);
 
+  console.log(req.query);
   var info_hash = hashy(req.query.info_hash);
   console.log(info_hash);
-  var peer_id = decodeURI(req.query.peer_id);
+  var peer_id = decodeURIComponent(req.query.peer_id);
+  var escaped = escape(req.query.peer_id);
+  console.log('escaped ' + escaped);
+  console.log('decoded ' + peer_id);
+  console.log('normal  ' + req.query.peer_id);
 
   var ip = req.connection.remoteAddress;
   if(ip.substring(0,7) == '::ffff:') {
     ip = ip.substring(7);
   }
-  var port = req.connection.remotePort;
-  //var port = req.query.port;
+  //var port = req.connection.remotePort;
+  var port = req.query.port;
   console.log(ip);
   var torrent = findTorrent(data, info_hash);
+  var completed;
   if (torrent === false){
-    var obj = { "info_hash" : info_hash, "peers" : [{ "peer_id" : peer_id, "ip" : ip, "port" : port }]};
+    if(req.query.left === '0') {
+      completed = true;
+    } else {
+      completed = false;
+    }
+    var obj = { "info_hash" : info_hash, "peers" : [{ "peer_id" : peer_id, "ip" : ip, "port" : port, "completed" : completed }]};
     data.push(obj);
     torrent = obj;
     //console.log(obj.peers);
   }
   else {
-    //var peer = findID(torrent.peers, port, ip);
+    //figure out if completed
+    if(req.query.left == '0') {
+      completed = true;
+    } else {
+      completed = false;
+    }
+    
     var peer = findHash(torrent.peers, peer_id);
     if(peer === false){
-      var obj = { "peer_id" : peer_id, "ip" : ip, "port" : port };
+      var obj = { "peer_id" : peer_id, "ip" : ip, "port" : port, "completed" : completed };
       torrent.peers.push(obj);
     }
     else {
       peer.ip = ip;
       peer.port = port;
+      peer.completed = completed;
     }
   }
   
@@ -103,7 +114,18 @@ app.get('/', function(req, res) {
 });
 
 var bencode = function(torrent) {
-  var response = 'd8:intervali600e5:peersl'
+  var response = 'd8:intervali600e12:min intervali30e'
+  var complete = 0;
+  var incomplete = 0;
+  for(var i = 0; i < torrent.peers.length; i++) {
+    if(torrent.peers[i].completed === true) {
+      complete++;
+    } else {
+      incomplete++;
+    }
+  }
+  var response = response.concat('8:completei' + complete + 'e');
+  var response = response.concat('10:incompletei' + incomplete + 'e5:peersl');
   for(var i = 0; i < torrent.peers.length; i++) {
     response = response.concat('d');
     response = response.concat('2:ip');
