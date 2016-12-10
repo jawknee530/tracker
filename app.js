@@ -23,6 +23,7 @@ var findID = function(data, qPort, qip) {
   return false;
 }
 
+//used function from https://gist.github.com/dirkomatik/2274843
 var findHash = function(data, id) {
   for(var i = 0; i < data.length; i++) {
     if(data[i].peer_id === id) {
@@ -54,11 +55,6 @@ app.get('/', function(req, res) {
   console.log(req.query);
   var info_hash = hashy(req.query.info_hash);
   console.log(info_hash);
-  var peer_id = decodeURIComponent(req.query.peer_id);
-  var escaped = escape(req.query.peer_id);
-  console.log('escaped ' + escaped);
-  console.log('decoded ' + peer_id);
-  console.log('normal  ' + req.query.peer_id);
 
   var ip = req.connection.remoteAddress;
   if(ip.substring(0,7) == '::ffff:') {
@@ -75,7 +71,7 @@ app.get('/', function(req, res) {
     } else {
       completed = false;
     }
-    var obj = { "info_hash" : info_hash, "peers" : [{ "peer_id" : peer_id, "ip" : ip, "port" : port, "completed" : completed }]};
+    var obj = { "info_hash" : info_hash, "peers" : [{ "peer_id" : req.query.peer_id, "ip" : ip, "port" : port, "completed" : completed }]};
     data.push(obj);
     torrent = obj;
     //console.log(obj.peers);
@@ -88,9 +84,9 @@ app.get('/', function(req, res) {
       completed = false;
     }
     
-    var peer = findHash(torrent.peers, peer_id);
+    var peer = findHash(torrent.peers, req.query.peer_id);
     if(peer === false){
-      var obj = { "peer_id" : peer_id, "ip" : ip, "port" : port, "completed" : completed };
+      var obj = { "peer_id" : req.query.peer_id, "ip" : ip, "port" : port, "completed" : completed };
       torrent.peers.push(obj);
     }
     else {
@@ -114,7 +110,7 @@ app.get('/', function(req, res) {
 });
 
 var bencode = function(torrent) {
-  var response = 'd8:intervali600e12:min intervali30e'
+  var response = 'd8:intervali240e12:min intervali30e'
   var complete = 0;
   var incomplete = 0;
   for(var i = 0; i < torrent.peers.length; i++) {
